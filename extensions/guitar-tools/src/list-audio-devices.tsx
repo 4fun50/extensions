@@ -40,7 +40,7 @@ export default function ListAudioDevices() {
         for (const line of lines) {
           // Detect device name (indented with 8 spaces and ending with colon)
           // This pattern matches any device name regardless of starting character
-          if (line.match(/^        \S.*:$/)) {
+          if (line.match(/^ {8}\S.*:$/)) {
             // If we had a device in progress with input channels, save it
             if (currentDevice.channels && deviceName) {
               deviceList.push({
