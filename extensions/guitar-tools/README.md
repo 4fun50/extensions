@@ -1,12 +1,14 @@
 # Guitar Tools
 
-A Raycast extension that provides tools that gutarist's use in separate applications.
+A Raycast extension that provides tools that guitarists use in separate applications.
 
 ## Features
 
 - Start a chromatic tuner directly from Raycast
+- Select your preferred audio input device (useful for audio interfaces and external sound cards)
 
 ### Future Features
+
 - Guitar fretboard practice tool
 
 ## Requirements
@@ -22,7 +24,14 @@ A Raycast extension that provides tools that gutarist's use in separate applicat
 2. Run the command
 3. Play a note on your instrument and follow the icons to tune up or down
 
+**Using an external audio interface:**
+
+1. Search for "List Audio Devices" in Raycast
+2. Select your preferred audio input device (e.g., audio interface, sound card)
+3. The tuner will now use the selected device
+
 ## Troubleshooting
 
-- If you encounter issues with getting into the tuner, make sure Sox is installed: `brew install sox`
+- If you encounter issues with the tuner, make sure Sox is installed: `brew install sox`
 - Ensure your microphone permissions are enabled for Raycast
+- If your audio interface is not detected, try unplugging and reconnecting it
