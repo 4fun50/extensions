@@ -56,24 +56,21 @@ export const analyzeSingleChunk = async (): Promise<{ pitch: number; clarity: nu
     const { getSelectedDevice } = await import("./storage.utils");
     const audioDeviceId = (await getSelectedDevice()).trim();
 
-    // Construct Sox command with the correct audio device
+    // Build Sox command with proper escaping to prevent shell injection
     // If audioDeviceId is empty, use -d (default microphone)
-    // Otherwise use -t coreaudio with the device ID
-    let audioInput = "-d"; // Default = system default microphone
-
-    if (audioDeviceId && audioDeviceId.length > 0) {
-      // Use the specified device
-      // On macOS, Sox uses CoreAudio with the device ID
-      audioInput = `-t coreaudio ${JSON.stringify(audioDeviceId)}`;
-    }
+    // Otherwise use -t coreaudio with the properly escaped device ID
+    const recordCmd =
+      audioDeviceId && audioDeviceId.length > 0
+        ? `"${soxPath}" -t coreaudio ${JSON.stringify(audioDeviceId)} -c 1 -r ${SAMPLE_RATE} -b 16 "${tempFile}" trim 0 0.5`
+        : `"${soxPath}" -d -c 1 -r ${SAMPLE_RATE} -b 16 "${tempFile}" trim 0 0.5`;
 
     // Sox command breakdown:
-    // audioInput: Audio device (either -d for default, or -t coreaudio "ID")
+    // -t coreaudio "ID": Audio device (or -d for default)
     // -c 1: Record in mono (1 channel) - sufficient for pitch detection
     // -r SAMPLE_RATE: Sample rate
     // -b 16: 16-bit depth - good balance of quality and performance
     // trim 0 0.5: Record for 0.5 seconds starting at position 0
-    execSync(`"${soxPath}" ${audioInput} -c 1 -r ${SAMPLE_RATE} -b 16 "${tempFile}" trim 0 0.5`);
+    execSync(recordCmd);
 
     // Sox conversion command breakdown:
     // Input: WAV file from recording
