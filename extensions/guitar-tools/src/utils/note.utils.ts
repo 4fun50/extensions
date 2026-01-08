@@ -64,7 +64,7 @@ export const analyzeSingleChunk = async (): Promise<{ pitch: number; clarity: nu
     if (audioDeviceId && audioDeviceId.length > 0) {
       // Use the specified device
       // On macOS, Sox uses CoreAudio with the device ID
-      audioInput = `-t coreaudio "${audioDeviceId}"`;
+      audioInput = `-t coreaudio ${JSON.stringify(audioDeviceId)}`;
     }
 
     // Sox command breakdown:
