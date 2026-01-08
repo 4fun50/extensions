@@ -1,10 +1,6 @@
-# Tuner Changelog
-
-## [Initial Version] - 2025-10-06
-
 # Changelog
 
-## [Unreleased]
+## [Initial Version] - 2025-10-06
 
 ### Added
 
@@ -19,7 +15,3 @@
 ### Fixed
 
 - Improved device name detection to support all audio device naming conventions
-
-## [Initial Version] - 2024-XX-XX
-
-- Initial release with chromatic tuner functionality
