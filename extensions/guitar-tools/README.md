@@ -26,9 +26,10 @@ A Raycast extension that provides tools that guitarists use in separate applicat
 
 **Using an external audio interface:**
 
-1. Search for "List Audio Devices" in Raycast
-2. Select your preferred audio input device (e.g., audio interface, sound card)
-3. The tuner will now use the selected device
+1. While in the tuner, press `Cmd+K` to open the Action Panel
+2. Select "Select Audio Input Device"
+3. Choose your preferred audio input device (e.g., audio interface, sound card)
+4. The tuner will now use the selected device
 
 ## Troubleshooting
 
