@@ -1,89 +1,23 @@
-import { List, ActionPanel, Action, showToast, Toast, Icon } from "@raycast/api";
+import { List, ActionPanel, Action, showToast, Toast, Icon, useNavigation } from "@raycast/api";
 import { useEffect, useState } from "react";
-import { execSync } from "child_process";
+import { getAudioInputDevices, type AudioDevice } from "./utils/audio-devices.utils";
 import { saveSelectedDevice, getSelectedDevice } from "./utils/storage.utils";
 
-interface AudioDevice {
-  name: string;
-  type: string;
-  channels: string;
-  manufacturer: string;
-}
-
-export default function ListAudioDevices() {
+export default function ListAudioDevices(props: { onDeviceSelected?: (deviceName: string) => void }) {
+  const { pop } = useNavigation();
   const [devices, setDevices] = useState<AudioDevice[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedDevice, setSelectedDevice] = useState<string>("");
 
   useEffect(() => {
-    // Load the currently selected device
-    const loadSelectedDevice = async () => {
-      const device = await getSelectedDevice();
-      setSelectedDevice(device);
-    };
-
-    loadSelectedDevice();
-
-    // Function to retrieve the list of audio devices
-    const getAudioDevices = () => {
+    const load = async () => {
       try {
-        // Execute system_profiler command to list audio devices
-        const output = execSync("/usr/sbin/system_profiler SPAudioDataType").toString();
+        const device = await getSelectedDevice();
+        setSelectedDevice(device);
 
-        // Parse the output to extract devices with audio input
-        const deviceList: AudioDevice[] = [];
-        const lines = output.split("\n");
-
-        let currentDevice: Partial<AudioDevice> = {};
-        let deviceName = "";
-
-        for (const line of lines) {
-          // Detect device name (indented with 8 spaces and ending with colon)
-          // This pattern matches any device name regardless of starting character
-          if (line.match(/^ {8}\S.*:$/)) {
-            // If we had a device in progress with input channels, save it
-            if (currentDevice.channels && deviceName) {
-              deviceList.push({
-                name: deviceName,
-                type: currentDevice.type || "Unknown",
-                channels: currentDevice.channels,
-                manufacturer: currentDevice.manufacturer || "Unknown",
-              });
-            }
-
-            // New device
-            deviceName = line.trim().replace(":", "");
-            currentDevice = {};
-          }
-
-          // Extract device information
-          if (line.includes("Input Channels:")) {
-            currentDevice.channels = line.split(":")[1].trim();
-          }
-          if (line.includes("Manufacturer:")) {
-            currentDevice.manufacturer = line.split(":")[1].trim();
-          }
-          if (line.includes("Transport:")) {
-            currentDevice.type = line.split(":")[1].trim();
-          }
-        }
-
-        // Add the last device if it has input channels
-        if (currentDevice.channels && deviceName) {
-          deviceList.push({
-            name: deviceName,
-            type: currentDevice.type || "Unknown",
-            channels: currentDevice.channels,
-            manufacturer: currentDevice.manufacturer || "Unknown",
-          });
-        }
-
+        const deviceList = getAudioInputDevices();
         setDevices(deviceList);
-        setIsLoading(false);
       } catch (error) {
-        console.error("Error getting audio devices:", error);
-
-        // Show more detailed error
         const errorMessage = error instanceof Error ? error.message : String(error);
 
         showToast({
@@ -91,29 +25,33 @@ export default function ListAudioDevices() {
           title: "Error",
           message: errorMessage,
         });
+      } finally {
         setIsLoading(false);
       }
     };
 
-    getAudioDevices();
+    load();
   }, []);
 
   const handleSelectDevice = async (deviceName: string) => {
     await saveSelectedDevice(deviceName);
     setSelectedDevice(deviceName);
+    props.onDeviceSelected?.(deviceName);
 
     await showToast({
       style: Toast.Style.Success,
       title: "Device Selected",
       message: `"${deviceName}" is now the active input device for the tuner`,
     });
+
+    pop();
   };
 
   return (
     <List isLoading={isLoading}>
-      {devices.map((device, index) => (
+      {devices.map((device) => (
         <List.Item
-          key={index}
+          key={device.name}
           title={device.name}
           subtitle={`${device.manufacturer} • ${device.channels} channel(s)`}
           accessories={[

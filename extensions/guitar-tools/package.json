@@ -22,12 +22,6 @@
       "title": "Chromatic Tuner",
       "description": "Start the chromatic tuner",
       "mode": "view"
-    },
-    {
-      "name": "list-audio-devices",
-      "title": "List Audio Devices",
-      "description": "List available audio input devices",
-      "mode": "view"
     }
   ],
   "dependencies": {
