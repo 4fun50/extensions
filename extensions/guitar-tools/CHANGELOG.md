@@ -1,6 +1,6 @@
-# Changelog
+# Guitar Tools Changelog
 
-## [Initial Version] - {PR_MERGE_DATE}
+## [Update] - {PR_MERGE_DATE}
 
 ### Added
 
@@ -16,3 +16,5 @@
 ### Fixed
 
 - Improved device name detection to support all audio device naming conventions
+
+## [Initial Version] - 2025-10-06
