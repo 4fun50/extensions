@@ -7,6 +7,12 @@ import { soxUtils } from "./sox.utils";
 import { PitchDetector } from "pitchy";
 import { A4_FREQ, CENTS_THRESHOLD, NOTE_NAMES, SAMPLE_RATE } from "../constants";
 
+// Audio recording constants
+const AUDIO_CHANNELS = 1;
+const BIT_DEPTH = 16;
+const RECORD_DURATION = 0.5;
+const SAMPLE_RATE_FLAG = SAMPLE_RATE;
+
 /**
  * Converts a frequency (Hz) to musical note information using equal temperament tuning
  *
@@ -61,25 +67,27 @@ export const analyzeSingleChunk = async (): Promise<{ pitch: number; clarity: nu
     // Otherwise use -t coreaudio with the properly escaped device ID
     const recordCmd =
       audioDeviceId && audioDeviceId.length > 0
-        ? `"${soxPath}" -t coreaudio ${JSON.stringify(audioDeviceId)} -c 1 -r ${SAMPLE_RATE} -b 16 "${tempFile}" trim 0 0.5`
-        : `"${soxPath}" -d -c 1 -r ${SAMPLE_RATE} -b 16 "${tempFile}" trim 0 0.5`;
+        ? `"${soxPath}" -t coreaudio ${JSON.stringify(audioDeviceId)} -c ${AUDIO_CHANNELS} -r ${SAMPLE_RATE_FLAG} -b ${BIT_DEPTH} "${tempFile}" trim 0 ${RECORD_DURATION}`
+        : `"${soxPath}" -d -c ${AUDIO_CHANNELS} -r ${SAMPLE_RATE_FLAG} -b ${BIT_DEPTH} "${tempFile}" trim 0 ${RECORD_DURATION}`;
 
     // Sox command breakdown:
     // -t coreaudio "ID": Audio device (or -d for default)
-    // -c 1: Record in mono (1 channel) - sufficient for pitch detection
-    // -r SAMPLE_RATE: Sample rate
-    // -b 16: 16-bit depth - good balance of quality and performance
-    // trim 0 0.5: Record for 0.5 seconds starting at position 0
+    // -c AUDIO_CHANNELS: Record in mono - sufficient for pitch detection
+    // -r SAMPLE_RATE_FLAG: Sample rate
+    // -b BIT_DEPTH: Bit depth - good balance of quality and performance
+    // trim 0 RECORD_DURATION: Record duration in seconds
     execSync(recordCmd);
 
     // Sox conversion command breakdown:
     // Input: WAV file from recording
-    // -r SAMPLE_RATE: Sample rate
+    // -r SAMPLE_RATE_FLAG: Sample rate
     // -e signed-integer: Use signed integer encoding
-    // -b 16: 16-bit samples
-    // -c 1: Mono output
+    // -b BIT_DEPTH: Bit depth
+    // -c AUDIO_CHANNELS: Mono output
     // -t raw: Output as raw PCM data (no headers)
-    execSync(`"${soxPath}" "${tempFile}" -r ${SAMPLE_RATE} -e signed-integer -b 16 -c 1 -t raw "${rawFile}"`);
+    execSync(
+      `"${soxPath}" "${tempFile}" -r ${SAMPLE_RATE_FLAG} -e signed-integer -b ${BIT_DEPTH} -c ${AUDIO_CHANNELS} -t raw "${rawFile}"`,
+    );
 
     // Read the raw PCM file as binary data
     const audioBuffer = readFileSync(rawFile);
