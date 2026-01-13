@@ -59,7 +59,7 @@ export const analyzeSingleChunk = async (): Promise<{ pitch: number; clarity: nu
     }
 
     // Get the selected audio device from local storage instead of preferences
-    const { getSelectedDevice } = await import("./storage.utils");
+    const { getSelectedDevice } = await import("./AudioDeviceStorage.utils");
     const audioDeviceId = (await getSelectedDevice()).trim();
 
     // Build Sox command with proper escaping to prevent shell injection

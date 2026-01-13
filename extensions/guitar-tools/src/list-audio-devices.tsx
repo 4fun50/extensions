@@ -1,7 +1,7 @@
 import { List, ActionPanel, Action, showToast, Toast, Icon, useNavigation } from "@raycast/api";
 import { useEffect, useState } from "react";
 import { getAudioInputDevices, type AudioDevice } from "./utils/audio-devices.utils";
-import { saveSelectedDevice, getSelectedDevice } from "./utils/storage.utils";
+import { saveSelectedDevice, getSelectedDevice } from "./utils/AudioDeviceStorage.utils";
 
 export default function ListAudioDevices(props: { onDeviceSelected?: (deviceName: string) => void }) {
   const { pop } = useNavigation();
