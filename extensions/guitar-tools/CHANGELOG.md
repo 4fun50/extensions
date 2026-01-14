@@ -1,14 +1,9 @@
 # Guitar Tools Changelog
 
-## [Update] - {PR_MERGE_DATE}
+## [Audio Device Selection] - {PR_MERGE_DATE}
 
-### Added
+- Added audio device selection via Action Panel (Cmd+K) in the tuner
+- Added visual indicator showing the currently selected audio device
+- Added support for external audio interfaces and sound cards
 
-- Audio device selection via Action Panel (Cmd+K) in the tuner
-- Visual indicator showing the currently selected audio device
-
-### Fixed
-
-- Improved device name detection to support all audio device naming conventions
-
-## [Initial Version] - 2025-10-06
+## [Initial Version] - {PR_MERGE_DATE}

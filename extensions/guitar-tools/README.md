@@ -24,9 +24,12 @@ A Raycast extension that provides tools that guitarists use in separate applicat
 2. Run the command
 3. Play a note on your instrument and follow the icons to tune up or down
 
-**Using an external audio interface:**
+### Using an External Audio Interface
 
-Press `Cmd+K` in the tuner and select "Select Audio Input Device"
+1. While in a command that uses audio input, press `Cmd+K` to open the Action Panel
+2. Select "Select Audio Input Device"
+3. Choose your preferred audio input device (e.g., audio interface, sound card)
+4. The command will now use the selected device
 
 ## Troubleshooting
 

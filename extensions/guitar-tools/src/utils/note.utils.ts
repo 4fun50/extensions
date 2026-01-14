@@ -65,10 +65,10 @@ export const analyzeSingleChunk = async (): Promise<{ pitch: number; clarity: nu
     // Build Sox command with proper escaping to prevent shell injection
     // If audioDeviceId is empty, use -d (default microphone)
     // Otherwise use -t coreaudio with the properly escaped device ID
-    const recordCmd =
-      audioDeviceId && audioDeviceId.length > 0
-        ? `"${soxPath}" -t coreaudio ${JSON.stringify(audioDeviceId)} -c ${AUDIO_CHANNELS} -r ${SAMPLE_RATE_FLAG} -b ${BIT_DEPTH} "${tempFile}" trim 0 ${RECORD_DURATION}`
-        : `"${soxPath}" -d -c ${AUDIO_CHANNELS} -r ${SAMPLE_RATE_FLAG} -b ${BIT_DEPTH} "${tempFile}" trim 0 ${RECORD_DURATION}`;
+    const useDefaultAudioInput = !audioDeviceId || audioDeviceId.length === 0;
+    const audioInputFlags = useDefaultAudioInput ? "-d" : `-t coreaudio ${JSON.stringify(audioDeviceId)}`;
+    const commonFlags = `-c ${AUDIO_CHANNELS} -r ${SAMPLE_RATE_FLAG} -b ${BIT_DEPTH} "${tempFile}" trim 0 ${RECORD_DURATION}`;
+    const recordCmd = `"${soxPath}" ${audioInputFlags} ${commonFlags}`;
 
     // Sox command breakdown:
     // -t coreaudio "ID": Audio device (or -d for default)
